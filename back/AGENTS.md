@@ -44,3 +44,4 @@ NestJS 11 + TypeORM + SQLite (better-sqlite3) + JWT (passport-jwt) + bcrypt + cl
 - No hay CI, Docker, hooks, ni README.
 - `ValidationPipe` global con `whitelist`, `forbidNonWhitelisted`, `transform`.
 - `ProductsController` y `CategoriesController` no tienen guards de auth.
+--
