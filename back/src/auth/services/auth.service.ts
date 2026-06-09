@@ -10,7 +10,7 @@ import { UsersService } from "../../users/services/users.service";
 import { ConfigService } from "@nestjs/config";
 
 export interface AuthPayload {
-  accessToken: string;
+  access_token: string;
   user: {
     id: string;
     email: string;
@@ -58,7 +58,7 @@ export class AuthService {
     );
 
     return {
-      accessToken,
+      access_token: accessToken,
       user: {
         id: user.id,
         email: user.email,
