@@ -3,3 +3,4 @@ dist/
 *.sqlite
 .DS_Store
 .env
+opencode.json
