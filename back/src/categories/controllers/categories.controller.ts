@@ -2,18 +2,29 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Body,
   Param,
   Delete,
   Query,
+  UseGuards,
 } from "@nestjs/common";
 import { CategoriesService } from "../services/categories.service";
-import { Category, CreateCategoryInput } from "../categories.types";
+import {
+  Category,
+  CreateCategoryInput,
+  UpdateCategoryInput,
+} from "../categories.types";
 import { Product } from "../../products/product.types";
 import { PaginatedResult } from "../../common/types/paginated-result.type";
 import { paginate } from "../../common/utils/pagination.util";
+import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../../auth/guards/roles.guard";
+import { Roles } from "../../auth/decorators/roles.decorator";
+import { UserRole } from "../../users/enums/user-role.enum";
 
 @Controller("categories")
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
@@ -32,6 +43,7 @@ export class CategoriesController {
   }
 
   @Post()
+  @Roles(UserRole.ADMIN)
   async create(@Body() input: CreateCategoryInput): Promise<Category> {
     return this.categoriesService.create(input);
   }
@@ -41,7 +53,17 @@ export class CategoriesController {
     return this.categoriesService.getProductsByCategoryId(Number(id));
   }
 
+  @Put(":id")
+  @Roles(UserRole.ADMIN)
+  async update(
+    @Param("id") id: string,
+    @Body() input: UpdateCategoryInput,
+  ): Promise<Category | undefined> {
+    return this.categoriesService.update(Number(id), input);
+  }
+
   @Delete(":id")
+  @Roles(UserRole.ADMIN)
   async delete(@Param("id") id: string): Promise<Category | undefined> {
     return this.categoriesService.delete(Number(id));
   }

@@ -8,14 +8,20 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from "@nestjs/common";
 import { ProductsService } from "../services/products.service";
 import { Product } from "../product.types";
 import { CreateProductDto, UpdateProductDto } from "../../common/products.dto";
 import { PaginatedResult } from "../../common/types/paginated-result.type";
 import { paginate } from "../../common/utils/pagination.util";
+import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../../auth/guards/roles.guard";
+import { Roles } from "../../auth/decorators/roles.decorator";
+import { UserRole } from "../../users/enums/user-role.enum";
 
 @Controller("products")
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
@@ -44,11 +50,13 @@ export class ProductsController {
   }
 
   @Post()
+  @Roles(UserRole.ADMIN)
   async create(@Body() body: CreateProductDto): Promise<Product> {
     return this.productsService.create(body);
   }
 
   @Put(":id")
+  @Roles(UserRole.ADMIN)
   async update(
     @Param("id") id: string,
     @Body() body: UpdateProductDto,
@@ -57,6 +65,7 @@ export class ProductsController {
   }
 
   @Patch(":id/stock")
+  @Roles(UserRole.ADMIN)
   async reduceStock(
     @Param("id") id: string,
     @Body("quantity") quantity: number,
@@ -65,6 +74,7 @@ export class ProductsController {
   }
 
   @Delete(":id")
+  @Roles(UserRole.ADMIN)
   async remove(@Param("id") id: string): Promise<Product> {
     return this.productsService.remove(Number(id));
   }

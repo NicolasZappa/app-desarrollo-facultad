@@ -5,6 +5,10 @@ import { UserRole } from "../enums/user-role.enum";
 export interface UsersRepository {
   findAll(): Promise<UserEntity[]>;
   findOne(id: string): Promise<UserEntity | null>;
+  findOneWithPassword(id: string): Promise<UserEntity | null>;
   create(email: string, password: string): Promise<UserEntity>;
   findByEmail(email: string): Promise<UserEntity | null>;
+  updateRole(id: string, role: UserRole): Promise<UserEntity | null>;
+  updatePassword(id: string, passwordHash: string): Promise<UserEntity | null>;
+  updateEmail(id: string, email: string): Promise<UserEntity | null>;
 }

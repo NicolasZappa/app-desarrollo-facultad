@@ -4,6 +4,7 @@ import { registerToolSet } from "./tool-factory";
 import allTools from "./tools/index";
 import { api } from "./api-client";
 
+
 const server = new McpServer(
   { name: "api-c-bridge", version: "1.0.0" },
   { capabilities: { tools: {} } }

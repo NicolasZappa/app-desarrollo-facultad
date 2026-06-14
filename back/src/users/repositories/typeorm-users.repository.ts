@@ -38,4 +38,30 @@ export class TypeOrmUsersRepository implements UsersRepository {
       .where("user.email = :email", { email })
       .getOne();
   }
+
+  async findOneWithPassword(id: string): Promise<UserEntity | null> {
+    return this.userRepository
+      .createQueryBuilder("user")
+      .addSelect("user.passwordHash")
+      .where("user.id = :id", { id })
+      .getOne();
+  }
+
+  async updateRole(id: string, role: UserRole): Promise<UserEntity | null> {
+    await this.userRepository.update(id, { role });
+    return this.userRepository.findOne({ where: { id } });
+  }
+
+  async updatePassword(
+    id: string,
+    passwordHash: string,
+  ): Promise<UserEntity | null> {
+    await this.userRepository.update(id, { passwordHash });
+    return this.userRepository.findOne({ where: { id } });
+  }
+
+  async updateEmail(id: string, email: string): Promise<UserEntity | null> {
+    await this.userRepository.update(id, { email });
+    return this.userRepository.findOne({ where: { id } });
+  }
 }

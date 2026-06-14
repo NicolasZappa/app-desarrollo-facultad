@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 
+
 const BASE_URL = process.env.API_C_URL || "http://localhost:3000";
 
 class ApiClient {

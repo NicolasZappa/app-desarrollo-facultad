@@ -1,5 +1,9 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { Category, CreateCategoryInput } from "../categories.types";
+import {
+  Category,
+  CreateCategoryInput,
+  UpdateCategoryInput,
+} from "../categories.types";
 import { Product } from "../../products/product.types";
 import {
   CATEGORIES_REPOSITORY,
@@ -23,6 +27,13 @@ export class CategoriesService {
 
   async create(input: CreateCategoryInput): Promise<Category> {
     return this.categoriesRepository.create(input);
+  }
+
+  async update(
+    id: number,
+    input: UpdateCategoryInput,
+  ): Promise<Category | undefined> {
+    return this.categoriesRepository.update(id, input);
   }
 
   async delete(id: number): Promise<Category | undefined> {

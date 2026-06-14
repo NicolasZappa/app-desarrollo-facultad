@@ -5,6 +5,7 @@ import { CategoriesRepository } from "./categories.repositories";
 import {
   Category as CategoryType,
   CreateCategoryInput,
+  UpdateCategoryInput,
 } from "../categories.types";
 import { Category } from "../entities/category.entity";
 
@@ -27,6 +28,14 @@ export class TypeOrmCategoriesRepository implements CategoriesRepository {
   async create(input: CreateCategoryInput): Promise<CategoryType> {
     const newCategory = this.categoryRepository.create(input);
     return await this.categoryRepository.save(newCategory);
+  }
+
+  async update(
+    id: number,
+    input: UpdateCategoryInput,
+  ): Promise<CategoryType | undefined> {
+    await this.categoryRepository.update(id, input);
+    return this.getById(id);
   }
 
   async delete(id: number): Promise<CategoryType | undefined> {
