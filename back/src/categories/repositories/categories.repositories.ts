@@ -9,6 +9,7 @@ export const CATEGORIES_REPOSITORY = "CATEGORIES_REPOSITORY";
 
 export interface CategoriesRepository {
   getAll(): Promise<Category[]>;
+  findByName(name: string): Promise<Category | undefined>;
   getById(id: number): Promise<Category | undefined>;
   create(input: CreateCategoryDto): Promise<Category>;
   update(id: number, input: UpdateCategoryDto): Promise<Category | undefined>;

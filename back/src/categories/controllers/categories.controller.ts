@@ -6,7 +6,6 @@ import {
   Body,
   Param,
   Delete,
-  Query,
   UseGuards,
 } from "@nestjs/common";
 import { CategoriesService } from "../services/categories.service";
@@ -16,8 +15,6 @@ import {
   UpdateCategoryDto,
 } from "../../common/categories.dto";
 import { Product } from "../../products/product.types";
-import { PaginatedResult } from "../../common/types/paginated-result.type";
-import { paginate } from "../../common/utils/pagination.util";
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../../auth/guards/roles.guard";
 import { Roles } from "../../auth/decorators/roles.decorator";
@@ -29,23 +26,23 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get()
-  async getAll(
-    @Query("page") page?: string,
-    @Query("limit") limit?: string,
-  ): Promise<PaginatedResult<Category>> {
-    const categories = await this.categoriesService.getAll();
-    return paginate(categories, page, limit);
+  async getAll(): Promise<Category[]> {
+    return this.categoriesService.getAll();
   }
 
   @Get(":id")
-  async getById(@Param("id") id: string): Promise<Category | undefined> {
-    return this.categoriesService.getById(Number(id));
+  async getById(
+    @Param("id") id: string,
+  ): Promise<{ message: string; category: Category }> {
+    const category = await this.categoriesService.getById(Number(id));
+    return { message: "Response 200", category };
   }
 
   @Post()
   @Roles(UserRole.ADMIN)
-  async create(@Body() input: CreateCategoryDto): Promise<Category> {
-    return this.categoriesService.create(input);
+  async create(@Body() input: CreateCategoryDto): Promise<{ message: string }> {
+    await this.categoriesService.create(input);
+    return { message: "Response 201" };
   }
 
   @Get(":id/products")
@@ -58,13 +55,17 @@ export class CategoriesController {
   async update(
     @Param("id") id: string,
     @Body() input: UpdateCategoryDto,
-  ): Promise<Category | undefined> {
-    return this.categoriesService.update(Number(id), input);
+  ): Promise<{ message: string; category: Category | undefined }> {
+    const category = await this.categoriesService.update(Number(id), input);
+    return { message: "Response 200", category };
   }
 
   @Delete(":id")
   @Roles(UserRole.ADMIN)
-  async delete(@Param("id") id: string): Promise<Category | undefined> {
-    return this.categoriesService.delete(Number(id));
+  async delete(
+    @Param("id") id: string,
+  ): Promise<{ message: string; category: Category }> {
+    const category = await this.categoriesService.delete(Number(id));
+    return { message: "Response 200", category };
   }
 }

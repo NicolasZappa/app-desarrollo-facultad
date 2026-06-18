@@ -17,7 +17,14 @@ export class TypeOrmCategoriesRepository implements CategoriesRepository {
   ) {}
 
   async getAll(): Promise<CategoryType[]> {
-    return await this.categoryRepository.find();
+    return await this.categoryRepository.find({ order: { name: "ASC" } });
+  }
+
+  async findByName(name: string): Promise<CategoryType | undefined> {
+    const category = await this.categoryRepository.findOne({
+      where: { name },
+    });
+    return category || undefined;
   }
 
   async getById(id: number): Promise<CategoryType | undefined> {
@@ -50,7 +57,8 @@ export class TypeOrmCategoriesRepository implements CategoriesRepository {
     }
 
     await this.categoryRepository.delete(id);
-    return category;
+    const { products, ...result } = category;
+    return result;
   }
 
   async getProductsByCategoryId(categoryId: number): Promise<any[]> {
