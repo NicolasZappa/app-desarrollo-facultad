@@ -10,7 +10,7 @@ import { Product } from "./products/entities/product.entity";
 import { Category } from "./categories/entities/category.entity";
 import { LoggerMiddleware, TimingMiddleware } from "./common/logger.middleware";
 import { MiddlewareConsumer, NestModule } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { UserEntity } from "./users/entities/user.entity";
 
 @Module({
@@ -19,11 +19,19 @@ import { UserEntity } from "./users/entities/user.entity";
       isGlobal: true,
       envFilePath: [".env", ".env.example"],
     }),
-    TypeOrmModule.forRoot({
-      type: "sqlite",
-      database: "database.sqlite",
-      entities: [Product, Category, UserEntity],
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: "postgres",
+        host: config.get<string>("DB_HOST"),
+        port: config.get<number>("DB_PORT"),
+        username: config.get<string>("DB_USERNAME"),
+        password: config.get<string>("DB_PASSWORD"),
+        database: config.get<string>("DB_NAME"),
+        entities: [Product, Category, UserEntity],
+        synchronize: true,
+      }),
     }),
     AuthModule,
     ProductsModule,
