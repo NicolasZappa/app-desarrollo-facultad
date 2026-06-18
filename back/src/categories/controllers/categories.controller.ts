@@ -10,11 +10,11 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { CategoriesService } from "../services/categories.service";
+import { Category } from "../categories.types";
 import {
-  Category,
-  CreateCategoryInput,
-  UpdateCategoryInput,
-} from "../categories.types";
+  CreateCategoryDto,
+  UpdateCategoryDto,
+} from "../../common/categories.dto";
 import { Product } from "../../products/product.types";
 import { PaginatedResult } from "../../common/types/paginated-result.type";
 import { paginate } from "../../common/utils/pagination.util";
@@ -44,7 +44,7 @@ export class CategoriesController {
 
   @Post()
   @Roles(UserRole.ADMIN)
-  async create(@Body() input: CreateCategoryInput): Promise<Category> {
+  async create(@Body() input: CreateCategoryDto): Promise<Category> {
     return this.categoriesService.create(input);
   }
 
@@ -57,7 +57,7 @@ export class CategoriesController {
   @Roles(UserRole.ADMIN)
   async update(
     @Param("id") id: string,
-    @Body() input: UpdateCategoryInput,
+    @Body() input: UpdateCategoryDto,
   ): Promise<Category | undefined> {
     return this.categoriesService.update(Number(id), input);
   }

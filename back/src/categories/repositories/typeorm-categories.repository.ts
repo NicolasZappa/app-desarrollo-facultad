@@ -2,11 +2,11 @@ import { Injectable, ConflictException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CategoriesRepository } from "./categories.repositories";
+import { Category as CategoryType } from "../categories.types";
 import {
-  Category as CategoryType,
-  CreateCategoryInput,
-  UpdateCategoryInput,
-} from "../categories.types";
+  CreateCategoryDto,
+  UpdateCategoryDto,
+} from "../../common/categories.dto";
 import { Category } from "../entities/category.entity";
 
 @Injectable()
@@ -25,14 +25,14 @@ export class TypeOrmCategoriesRepository implements CategoriesRepository {
     return category || undefined;
   }
 
-  async create(input: CreateCategoryInput): Promise<CategoryType> {
+  async create(input: CreateCategoryDto): Promise<CategoryType> {
     const newCategory = this.categoryRepository.create(input);
     return await this.categoryRepository.save(newCategory);
   }
 
   async update(
     id: number,
-    input: UpdateCategoryInput,
+    input: UpdateCategoryDto,
   ): Promise<CategoryType | undefined> {
     await this.categoryRepository.update(id, input);
     return this.getById(id);

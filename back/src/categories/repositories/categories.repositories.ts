@@ -1,8 +1,8 @@
+import { Category } from "../categories.types";
 import {
-  Category,
-  CreateCategoryInput,
-  UpdateCategoryInput,
-} from "../categories.types";
+  CreateCategoryDto,
+  UpdateCategoryDto,
+} from "../../common/categories.dto";
 import { Product } from "../../products/product.types";
 
 export const CATEGORIES_REPOSITORY = "CATEGORIES_REPOSITORY";
@@ -10,8 +10,8 @@ export const CATEGORIES_REPOSITORY = "CATEGORIES_REPOSITORY";
 export interface CategoriesRepository {
   getAll(): Promise<Category[]>;
   getById(id: number): Promise<Category | undefined>;
-  create(input: CreateCategoryInput): Promise<Category>;
-  update(id: number, input: UpdateCategoryInput): Promise<Category | undefined>;
+  create(input: CreateCategoryDto): Promise<Category>;
+  update(id: number, input: UpdateCategoryDto): Promise<Category | undefined>;
   delete(id: number): Promise<Category | undefined>;
   getProductsByCategoryId(categoryId: number): Promise<any[]>;
 }

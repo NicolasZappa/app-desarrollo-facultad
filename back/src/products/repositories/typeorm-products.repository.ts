@@ -15,12 +15,13 @@ export class TypeOrmProductsRepository implements ProductsRepository {
   ) {}
 
   async findAllAsync(): Promise<Product[]> {
-    return this.productRepo.find();
+    return this.productRepo.find({ relations: ["category"] });
   }
 
   async findByNameAsync(name: string): Promise<Product[]> {
     return this.productRepo
       .createQueryBuilder("product")
+      .leftJoinAndSelect("product.category", "category")
       .where("LOWER(product.name) LIKE :name", {
         name: `%${name.toLowerCase()}%`,
       })
@@ -28,7 +29,10 @@ export class TypeOrmProductsRepository implements ProductsRepository {
   }
 
   async findByIdAsync(id: number): Promise<Product | undefined> {
-    const product = await this.productRepo.findOne({ where: { id } });
+    const product = await this.productRepo.findOne({
+      where: { id },
+      relations: ["category"],
+    });
     return product ?? undefined;
   }
 
@@ -38,6 +42,7 @@ export class TypeOrmProductsRepository implements ProductsRepository {
   ): Promise<Product[]> {
     const orderField = ["name", "price"].includes(orderBy) ? orderBy : "id";
     return this.productRepo.find({
+      relations: ["category"],
       order: { [orderField]: order.toUpperCase() },
     });
   }
@@ -49,14 +54,21 @@ export class TypeOrmProductsRepository implements ProductsRepository {
       stock: input.stock,
       category: { id: input.categoryId },
     });
-    return this.productRepo.save(product);
+    const saved = await this.productRepo.save(product);
+    return this.productRepo.findOne({
+      where: { id: saved.id },
+      relations: ["category"],
+    }) as Promise<Product>;
   }
 
   async updateAsync(
     id: number,
     input: UpdateProductDto,
   ): Promise<Product | undefined> {
-    const product = await this.productRepo.findOne({ where: { id } });
+    const product = await this.productRepo.findOne({
+      where: { id },
+      relations: ["category"],
+    });
     if (!product) return undefined;
 
     if (input.categoryId) {
@@ -65,14 +77,21 @@ export class TypeOrmProductsRepository implements ProductsRepository {
     }
 
     Object.assign(product, input);
-    return this.productRepo.save(product);
+    const saved = await this.productRepo.save(product);
+    return this.productRepo.findOne({
+      where: { id: saved.id },
+      relations: ["category"],
+    }) as Promise<Product>;
   }
 
   async reduceStockAsync(
     id: number,
     quantity: number,
   ): Promise<Product | undefined> {
-    const product = await this.productRepo.findOne({ where: { id } });
+    const product = await this.productRepo.findOne({
+      where: { id },
+      relations: ["category"],
+    });
     if (!product) {
       throw new NotFoundException("Product not found");
     }
@@ -82,11 +101,18 @@ export class TypeOrmProductsRepository implements ProductsRepository {
     }
 
     product.stock -= quantity;
-    return this.productRepo.save(product);
+    const saved = await this.productRepo.save(product);
+    return this.productRepo.findOne({
+      where: { id: saved.id },
+      relations: ["category"],
+    }) as Promise<Product>;
   }
 
   async removeAsync(id: number): Promise<Product | undefined> {
-    const product = await this.productRepo.findOne({ where: { id } });
+    const product = await this.productRepo.findOne({
+      where: { id },
+      relations: ["category"],
+    });
     if (!product) return undefined;
 
     await this.productRepo.remove(product);
