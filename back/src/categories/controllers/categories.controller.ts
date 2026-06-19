@@ -7,6 +7,10 @@ import {
   Param,
   Delete,
   UseGuards,
+  HttpException,
+  HttpStatus,
+  ConflictException,
+  NotFoundException,
 } from "@nestjs/common";
 import { CategoriesService } from "../services/categories.service";
 import { Category } from "../categories.types";
@@ -31,18 +35,34 @@ export class CategoriesController {
   }
 
   @Get(":id")
-  async getById(
-    @Param("id") id: string,
-  ): Promise<{ message: string; category: Category }> {
-    const category = await this.categoriesService.getById(Number(id));
-    return { message: "Response 200", category };
+  async getById(@Param("id") id: string): Promise<Category> {
+    try {
+      return await this.categoriesService.getById(Number(id));
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(
+          { message: "Category not found" },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      throw error;
+    }
   }
 
   @Post()
   @Roles(UserRole.ADMIN)
-  async create(@Body() input: CreateCategoryDto): Promise<{ message: string }> {
-    await this.categoriesService.create(input);
-    return { message: "Response 201" };
+  async create(@Body() input: CreateCategoryDto): Promise<Category> {
+    try {
+      return await this.categoriesService.create(input);
+    } catch (error) {
+      if (error instanceof ConflictException) {
+        throw new HttpException(
+          { message: "Category name already exists" },
+          HttpStatus.CONFLICT,
+        );
+      }
+      throw error;
+    }
   }
 
   @Get(":id/products")
@@ -55,17 +75,33 @@ export class CategoriesController {
   async update(
     @Param("id") id: string,
     @Body() input: UpdateCategoryDto,
-  ): Promise<{ message: string; category: Category | undefined }> {
-    const category = await this.categoriesService.update(Number(id), input);
-    return { message: "Response 200", category };
+  ): Promise<Category | undefined> {
+    try {
+      return await this.categoriesService.update(Number(id), input);
+    } catch (error) {
+      if (error instanceof ConflictException) {
+        throw new HttpException(
+          { message: "Category name already exists" },
+          HttpStatus.CONFLICT,
+        );
+      }
+      throw error;
+    }
   }
 
   @Delete(":id")
   @Roles(UserRole.ADMIN)
-  async delete(
-    @Param("id") id: string,
-  ): Promise<{ message: string; category: Category }> {
-    const category = await this.categoriesService.delete(Number(id));
-    return { message: "Response 200", category };
+  async delete(@Param("id") id: string): Promise<Category> {
+    try {
+      return await this.categoriesService.delete(Number(id));
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(
+          { message: "Category not found" },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      throw error;
+    }
   }
 }
