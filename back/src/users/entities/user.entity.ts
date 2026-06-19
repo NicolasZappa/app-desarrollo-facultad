@@ -14,4 +14,10 @@ export class UserEntity {
 
   @Column({ type: "text", default: UserRole.USER })
   role!: UserRole;
+
+  @Column({ default: false })
+  isVerified!: boolean;
+
+  @Column({ type: "varchar", nullable: true })
+  verificationToken!: string | null;
 }

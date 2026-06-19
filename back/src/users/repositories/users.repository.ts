@@ -6,8 +6,11 @@ export interface UsersRepository {
   findAll(): Promise<UserEntity[]>;
   findOne(id: string): Promise<UserEntity | null>;
   findOneWithPassword(id: string): Promise<UserEntity | null>;
-  create(email: string, password: string): Promise<UserEntity>;
+  create(email: string, password: string, verificationToken?: string): Promise<UserEntity>;
   findByEmail(email: string): Promise<UserEntity | null>;
+  findByVerificationToken(token: string): Promise<UserEntity | null>;
+  markVerified(id: string): Promise<UserEntity | null>;
+  updateVerificationToken(id: string, token: string | null): Promise<UserEntity | null>;
   updateRole(id: string, role: UserRole): Promise<UserEntity | null>;
   updatePassword(id: string, passwordHash: string): Promise<UserEntity | null>;
   updateEmail(id: string, email: string): Promise<UserEntity | null>;

@@ -4,6 +4,7 @@ import { PassportModule } from "@nestjs/passport";
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserEntity } from "../users/entities/user.entity";
+import { EmailModule } from "../email/email.module";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { RolesGuard } from "./guards/roles.guard";
@@ -13,6 +14,7 @@ import { AuthController } from "./controllers/auth.controller";
 @Module({
   imports: [
     PassportModule,
+    EmailModule,
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService): JwtModuleOptions => ({
         secret: configService.getOrThrow<string>("JWT_SECRET"),

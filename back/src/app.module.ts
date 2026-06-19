@@ -5,6 +5,7 @@ import { ProductsModule } from "./products/products.module";
 import { UsersModule } from "./users/users.module";
 import { CategoriesModule } from "./categories/categories.module";
 import { AuthModule } from "./auth/auth.module";
+import { EmailModule } from "./email/email.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Product } from "./products/entities/product.entity";
 import { Category } from "./categories/entities/category.entity";
@@ -33,6 +34,7 @@ import { UserEntity } from "./users/entities/user.entity";
         synchronize: true,
       }),
     }),
+    EmailModule,
     AuthModule,
     ProductsModule,
     UsersModule,

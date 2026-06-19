@@ -20,13 +20,14 @@ export class TypeOrmUsersRepository implements UsersRepository {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  async create(email: string, password: string): Promise<UserEntity> {
+  async create(email: string, password: string, verificationToken?: string): Promise<UserEntity> {
     const passwordHash = await bcrypt.hash(password, 10);
     const count = await this.userRepository.count();
     const user = this.userRepository.create({
       email,
       passwordHash,
       role: count === 0 ? UserRole.ADMIN : UserRole.USER,
+      verificationToken: verificationToken ?? null,
     });
     return this.userRepository.save(user);
   }
@@ -57,6 +58,20 @@ export class TypeOrmUsersRepository implements UsersRepository {
     passwordHash: string,
   ): Promise<UserEntity | null> {
     await this.userRepository.update(id, { passwordHash });
+    return this.userRepository.findOne({ where: { id } });
+  }
+
+  async findByVerificationToken(token: string): Promise<UserEntity | null> {
+    return this.userRepository.findOne({ where: { verificationToken: token } });
+  }
+
+  async markVerified(id: string): Promise<UserEntity | null> {
+    await this.userRepository.update(id, { isVerified: true, verificationToken: null });
+    return this.userRepository.findOne({ where: { id } });
+  }
+
+  async updateVerificationToken(id: string, token: string | null): Promise<UserEntity | null> {
+    await this.userRepository.update(id, { verificationToken: token });
     return this.userRepository.findOne({ where: { id } });
   }
 

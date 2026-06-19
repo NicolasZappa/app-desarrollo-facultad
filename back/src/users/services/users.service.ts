@@ -36,9 +36,9 @@ export class UsersService {
     }
   }
 
-  async create(email: string, password: string) {
+  async create(email: string, password: string, verificationToken?: string) {
     try {
-      return await this.usersRepository.create(email, password);
+      return await this.usersRepository.create(email, password, verificationToken);
     } catch (error) {
       throw new BadGatewayException("Error creating user");
     }
@@ -49,6 +49,30 @@ export class UsersService {
       return await this.usersRepository.findByEmail(email);
     } catch (error) {
       throw new BadGatewayException("Error fetching user by email");
+    }
+  }
+
+  async findByVerificationToken(token: string) {
+    try {
+      return await this.usersRepository.findByVerificationToken(token);
+    } catch (error) {
+      throw new BadGatewayException("Error fetching user by verification token");
+    }
+  }
+
+  async markVerified(id: string) {
+    try {
+      return await this.usersRepository.markVerified(id);
+    } catch (error) {
+      throw new BadGatewayException("Error marking user as verified");
+    }
+  }
+
+  async updateVerificationToken(id: string, token: string | null) {
+    try {
+      return await this.usersRepository.updateVerificationToken(id, token);
+    } catch (error) {
+      throw new BadGatewayException("Error updating verification token");
     }
   }
 
