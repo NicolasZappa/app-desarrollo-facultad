@@ -14,25 +14,30 @@ import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../../auth/guards/roles.guard";
 import { Roles } from "../../auth/decorators/roles.decorator";
 import { UserRole } from "../enums/user-role.enum";
+import { UpdateRoleDto } from "../dto/update-role.dto";
+import { ChangePasswordDto } from "../dto/change-password.dto";
+import { UpdateEmailDto } from "../dto/update-email.dto";
 
 @Controller("users")
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async findAll(): Promise<UserEntity[]> {
     return this.usersService.findAll();
   }
 
   @Get(":id")
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async findOne(@Param("id") id: string): Promise<UserEntity | null> {
     return this.usersService.findOne(id);
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async create(
     @Body() { email, password }: { email: string; password: string },
@@ -41,32 +46,37 @@ export class UsersController {
   }
 
   @Patch("me/password")
+  @UseGuards(JwtAuthGuard)
   async changePassword(
     @Req() req: { user: { id: string } },
-    @Body("currentPassword") currentPassword: string,
-    @Body("newPassword") newPassword: string,
-  ): Promise<UserEntity | null> {
-    return this.usersService.changePassword(
+    @Body() dto: ChangePasswordDto,
+  ): Promise<{ message: string }> {
+    await this.usersService.changePassword(
       req.user.id,
-      currentPassword,
-      newPassword,
+      dto.currentPassword,
+      dto.newPassword,
     );
+    return { message: "Password updated" };
   }
 
   @Patch("me/email")
+  @UseGuards(JwtAuthGuard)
   async updateEmail(
     @Req() req: { user: { id: string } },
-    @Body("newEmail") newEmail: string,
-  ): Promise<UserEntity | null> {
-    return this.usersService.updateEmail(req.user.id, newEmail);
+    @Body() dto: UpdateEmailDto,
+  ): Promise<{ message: string }> {
+    await this.usersService.updateEmail(req.user.id, dto.newEmail, dto.password);
+    return { message: "Email updated" };
   }
 
   @Patch(":id/role")
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async updateRole(
+    @Req() req: { user: { id: string } },
     @Param("id") id: string,
-    @Body("role") role: UserRole,
+    @Body() body: UpdateRoleDto,
   ): Promise<UserEntity | null> {
-    return this.usersService.updateRole(id, role);
+    return this.usersService.updateRole(req.user.id, id, body.role);
   }
 }

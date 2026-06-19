@@ -4,6 +4,7 @@ import {
   Inject,
   Injectable,
   UnauthorizedException,
+  ForbiddenException,
 } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
 import {
@@ -51,10 +52,34 @@ export class UsersService {
     }
   }
 
-  async updateRole(id: string, role: UserRole) {
+  async updateRole(requesterId: string, id: string, role: UserRole) {
     try {
+      if (requesterId === id) {
+        throw new ForbiddenException("Cannot change your own role");
+      }
+
+      const user = await this.usersRepository.findOne(id);
+      if (!user) {
+        throw new BadRequestException("User not found");
+      }
+
+      if (role === UserRole.USER && user.role === UserRole.ADMIN) {
+        const allUsers = await this.usersRepository.findAll();
+        const adminCount = allUsers.filter(u => u.role === UserRole.ADMIN).length;
+        if (adminCount <= 1) {
+          throw new ForbiddenException("Cannot demote the only admin");
+        }
+      }
+
       return await this.usersRepository.updateRole(id, role);
     } catch (error) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof UnauthorizedException ||
+        error instanceof ForbiddenException
+      ) {
+        throw error;
+      }
       throw new BadGatewayException("Error updating user role");
     }
   }
@@ -91,10 +116,29 @@ export class UsersService {
     }
   }
 
-  async updateEmail(id: string, newEmail: string) {
+  async updateEmail(id: string, newEmail: string, password: string) {
     try {
+      const user = await this.usersRepository.findOneWithPassword(id);
+      if (!user) {
+        throw new BadRequestException("User not found");
+      }
+
+      const isPasswordValid = await bcrypt.compare(
+        password,
+        user.passwordHash,
+      );
+      if (!isPasswordValid) {
+        throw new UnauthorizedException("Password is incorrect");
+      }
+
       return await this.usersRepository.updateEmail(id, newEmail);
     } catch (error) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof UnauthorizedException
+      ) {
+        throw error;
+      }
       throw new BadGatewayException("Error updating email");
     }
   }
