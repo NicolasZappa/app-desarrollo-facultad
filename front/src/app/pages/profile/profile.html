@@ -33,11 +33,48 @@
                 </td>
               </tr>
               <tr>
+                <th class="ps-0">Verificación</th>
+                <td>
+                  @if (user.isVerified) {
+                    <span class="badge bg-success">
+                      <i class="bi bi-check-circle me-1"></i>Verificado
+                    </span>
+                  } @else {
+                    <span class="badge bg-warning text-dark">
+                      <i class="bi bi-exclamation-circle me-1"></i>No verificado
+                    </span>
+                  }
+                </td>
+              </tr>
+              <tr>
                 <th class="ps-0">Registrado</th>
                 <td><i class="bi bi-calendar me-1 text-muted"></i>{{ user.createdAt | date:'medium' }}</td>
               </tr>
             </tbody>
           </table>
+
+          @if (resendMessage) {
+            <div class="alert alert-success d-flex align-items-center mt-3" role="alert">
+              <i class="bi bi-check-circle me-2"></i>
+              {{ resendMessage }}
+            </div>
+          }
+
+          @if (resendError) {
+            <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              {{ resendError }}
+            </div>
+          }
+
+          @if (!user.isVerified) {
+            <button class="btn btn-outline-primary w-100 mb-2" (click)="resend()" [disabled]="resending()">
+              @if (resending()) {
+                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+              }
+              <i class="bi bi-envelope me-1"></i>Reenviar email
+            </button>
+          }
 
           <hr />
           <button class="btn btn-danger w-100" (click)="auth.logout()">

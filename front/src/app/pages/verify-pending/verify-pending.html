@@ -1,0 +1,38 @@
+<div class="row justify-content-center mt-5">
+  <div class="col-md-5 col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-body p-4 text-center">
+        <i class="bi bi-envelope-check display-4" style="color: var(--primary)"></i>
+        <h4 class="mt-3 fw-bold">Verificá tu email</h4>
+        <p class="text-muted mt-2">
+          Revisá tu email. Te enviamos un link de verificación.
+        </p>
+
+        @if (message) {
+          <div class="alert alert-success d-flex align-items-center mt-3" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
+            {{ message }}
+          </div>
+        }
+
+        @if (error) {
+          <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            {{ error }}
+          </div>
+        }
+
+        <button class="btn btn-primary w-100 mt-3" (click)="resend()" [disabled]="loading()">
+          @if (loading()) {
+            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+          }
+          Reenviar email
+        </button>
+
+        <p class="mt-3 text-muted mb-0">
+          <a routerLink="/login">Volver al inicio</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

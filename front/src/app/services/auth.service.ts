@@ -35,6 +35,14 @@ export class AuthService {
     );
   }
 
+  verifyEmail(token: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.api}/verify-email`, { token });
+  }
+
+  resendVerification(): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.api}/resend-verification`, {});
+  }
+
   me(): Observable<SafeUser> {
     return this.http.get<SafeUser>(`${this.api}/me`).pipe(
       tap((user) => this.user.set(user)),
