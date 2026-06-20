@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { AuthResponse, LoginDto, RegisterDto } from '../models/auth';
+import { AuthResponse, ForgotPasswordDto, LoginDto, RegisterDto, ResetPasswordDto } from '../models/auth';
 import { SafeUser } from '../models/user';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
@@ -41,6 +41,14 @@ export class AuthService {
 
   resendVerification(): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(`${this.api}/resend-verification`, {});
+  }
+
+  forgotPassword(dto: ForgotPasswordDto): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.api}/forgot-password`, dto);
+  }
+
+  resetPassword(dto: ResetPasswordDto): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.api}/reset-password`, dto);
   }
 
   me(): Observable<SafeUser> {

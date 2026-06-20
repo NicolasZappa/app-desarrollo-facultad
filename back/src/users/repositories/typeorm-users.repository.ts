@@ -65,6 +65,10 @@ export class TypeOrmUsersRepository implements UsersRepository {
     return this.userRepository.findOne({ where: { verificationToken: token } });
   }
 
+  async findByResetPasswordToken(token: string): Promise<UserEntity | null> {
+    return this.userRepository.findOne({ where: { resetPasswordToken: token } });
+  }
+
   async markVerified(id: string): Promise<UserEntity | null> {
     await this.userRepository.update(id, { isVerified: true, verificationToken: null });
     return this.userRepository.findOne({ where: { id } });
@@ -72,6 +76,18 @@ export class TypeOrmUsersRepository implements UsersRepository {
 
   async updateVerificationToken(id: string, token: string | null): Promise<UserEntity | null> {
     await this.userRepository.update(id, { verificationToken: token });
+    return this.userRepository.findOne({ where: { id } });
+  }
+
+  async updateResetPasswordToken(
+    id: string,
+    token: string | null,
+    expires: Date | null,
+  ): Promise<UserEntity | null> {
+    await this.userRepository.update(id, {
+      resetPasswordToken: token,
+      resetPasswordExpires: expires,
+    });
     return this.userRepository.findOne({ where: { id } });
   }
 

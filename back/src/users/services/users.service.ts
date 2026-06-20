@@ -76,6 +76,34 @@ export class UsersService {
     }
   }
 
+  async findByResetPasswordToken(token: string) {
+    try {
+      return await this.usersRepository.findByResetPasswordToken(token);
+    } catch (error) {
+      throw new BadGatewayException("Error fetching user by reset token");
+    }
+  }
+
+  async updateResetPasswordToken(
+    id: string,
+    token: string | null,
+    expires: Date | null,
+  ) {
+    try {
+      return await this.usersRepository.updateResetPasswordToken(id, token, expires);
+    } catch (error) {
+      throw new BadGatewayException("Error updating reset password token");
+    }
+  }
+
+  async resetPassword(id: string, passwordHash: string) {
+    try {
+      return await this.usersRepository.updatePassword(id, passwordHash);
+    } catch (error) {
+      throw new BadGatewayException("Error resetting password");
+    }
+  }
+
   async updateRole(requesterId: string, id: string, role: UserRole) {
     try {
       if (requesterId === id) {

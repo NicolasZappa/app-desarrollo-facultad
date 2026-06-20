@@ -28,4 +28,15 @@ export class EmailService {
       html: `<p>Hacé clic en el siguiente enlace para verificar tu email:</p><p><a href="${link}">${link}</a></p>`,
     });
   }
+
+  async sendResetPasswordEmail(email: string, token: string): Promise<void> {
+    const link = `http://localhost:4200/reset-password?token=${token}`;
+
+    await this.transporter.sendMail({
+      from: this.configService.get<string>("SMTP_FROM", "noreply@example.com"),
+      to: email,
+      subject: "Recuperá tu contraseña",
+      html: `<p>Hacé clic en el siguiente enlace para cambiar tu contraseña:</p><p><a href="${link}">${link}</a></p>`,
+    });
+  }
 }

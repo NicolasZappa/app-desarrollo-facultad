@@ -116,6 +116,36 @@ export class AuthService {
     };
   }
 
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    const user = await this.usersService.findByEmail(email);
+
+    if (!user) {
+      return { message: "Si el email existe, recibirás un link" };
+    }
+
+    const token = crypto.randomUUID();
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
+
+    await this.usersService.updateResetPasswordToken(user.id, token, expiresAt);
+    await this.emailService.sendResetPasswordEmail(user.email, token);
+
+    return { message: "Si el email existe, recibirás un link" };
+  }
+
+  async resetPassword(token: string, password: string): Promise<{ message: string }> {
+    const user = await this.usersService.findByResetPasswordToken(token);
+
+    if (!user || !user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
+      throw new BadRequestException("Token inválido o expirado");
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    await this.usersService.resetPassword(user.id, passwordHash);
+    await this.usersService.updateResetPasswordToken(user.id, null, null);
+
+    return { message: "Contraseña actualizada" };
+  }
+
   private generateAuthPayload(user: UserEntity): AuthPayload {
     const accessToken = this.jwtService.sign(
       { sub: user.id },
