@@ -2,7 +2,7 @@
   <div class="col-md-6 col-lg-5">
     <div class="card shadow-sm">
       <div class="card-body p-4">
-        @if (auth.user(); as user) {
+        @if (user(); as user) {
           <div class="text-center mb-4">
             <i class="bi bi-person-circle display-4" style="color: var(--primary)"></i>
             <h3 class="mt-2 fw-bold">Mi perfil</h3>
@@ -53,28 +53,118 @@
             </tbody>
           </table>
 
-          @if (resendMessage) {
-            <div class="alert alert-success d-flex align-items-center mt-3" role="alert">
-              <i class="bi bi-check-circle me-2"></i>
-              {{ resendMessage }}
-            </div>
-          }
-
-          @if (resendError) {
-            <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
-              <i class="bi bi-exclamation-triangle me-2"></i>
-              {{ resendError }}
-            </div>
-          }
-
           @if (!user.isVerified) {
-            <button class="btn btn-outline-primary w-100 mb-2" (click)="resend()" [disabled]="resending()">
+            <button class="btn btn-outline-primary w-100 mb-2 mt-3" (click)="resend()" [disabled]="resending()">
               @if (resending()) {
                 <span class="spinner-border spinner-border-sm me-1" role="status"></span>
               }
               <i class="bi bi-envelope me-1"></i>Reenviar email
             </button>
           }
+
+          <hr />
+          <h5 class="fw-bold mb-3">Cambiar contraseña</h5>
+          <form (ngSubmit)="changePassword()" #passwordForm="ngForm">
+            <div class="mb-3">
+              <label for="currentPassword" class="form-label fw-medium">Contraseña actual</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                <input
+                  id="currentPassword"
+                  type="password"
+                  class="form-control"
+                  [(ngModel)]="currentPassword"
+                  name="currentPassword"
+                  required
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="newPassword" class="form-label fw-medium">Nueva contraseña</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                <input
+                  id="newPassword"
+                  type="password"
+                  class="form-control"
+                  [(ngModel)]="newPassword"
+                  name="newPassword"
+                  required
+                  minlength="8"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label fw-medium">Confirmar nueva contraseña</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  class="form-control"
+                  [(ngModel)]="confirmPassword"
+                  name="confirmPassword"
+                  required
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" [disabled]="passwordForm.invalid || passwordLoading()">
+              @if (passwordLoading()) {
+                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+              }
+              Actualizar contraseña
+            </button>
+          </form>
+
+          <hr />
+          <h5 class="fw-bold mb-3">Cambiar email</h5>
+          <form (ngSubmit)="changeEmail()" #emailForm="ngForm">
+            <div class="mb-3">
+              <label for="newEmail" class="form-label fw-medium">Nuevo email</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                <input
+                  id="newEmail"
+                  type="email"
+                  class="form-control"
+                  [(ngModel)]="newEmail"
+                  name="newEmail"
+                  required
+                  email
+                  placeholder="nuevo@correo.com"
+                />
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="emailPassword" class="form-label fw-medium">Contraseña actual</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                <input
+                  id="emailPassword"
+                  type="password"
+                  class="form-control"
+                  [(ngModel)]="emailPassword"
+                  name="emailPassword"
+                  required
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" [disabled]="emailForm.invalid || emailLoading()">
+              @if (emailLoading()) {
+                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+              }
+              Actualizar email
+            </button>
+          </form>
 
           <hr />
           <button class="btn btn-danger w-100" (click)="auth.logout()">

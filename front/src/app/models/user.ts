@@ -11,3 +11,13 @@ export type UserRole = 'user' | 'admin';
 export interface UpdateUserRoleDto {
   role: UserRole;
 }
+
+export interface ChangePasswordDto {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface UpdateEmailDto {
+  newEmail: string;
+  password: string;
+}
