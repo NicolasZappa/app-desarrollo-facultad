@@ -6,7 +6,7 @@ export interface SafeUser {
   createdAt: string;
 }
 
-export type UserRole = 'user' | 'admin';
+export type UserRole = 'user' | 'Admin';
 
 export interface UpdateUserRoleDto {
   role: UserRole;

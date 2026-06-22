@@ -72,7 +72,7 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    return this.user()?.role === 'admin';
+    return this.user()?.role === 'Admin';
   }
 
   private handleAuth(res: AuthResponse): void {
