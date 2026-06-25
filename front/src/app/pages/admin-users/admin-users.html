@@ -86,7 +86,7 @@
               <small class="text-muted">{{ user.createdAt | date:'short' }}</small>
               @if (user.id !== auth.user()?.id) {
                 @if (user.role === 'user') {
-                  <button class="btn btn-sm btn-outline-warning" (click)="changeRole(user.id, 'admin')">
+                  <button class="btn btn-sm btn-outline-warning" (click)="changeRole(user.id, 'Admin')">
                     <i class="bi bi-shield-plus me-1"></i>Admin
                   </button>
                 } @else {
