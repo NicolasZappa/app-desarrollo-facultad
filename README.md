@@ -42,7 +42,7 @@ Editar `back/.env` con los siguientes valores:
 ### Iniciar PostgreSQL y backend
 
 ```bash
-docker compose up -d          # levanta PostgreSQL en puerto 5433
+docker compose up -d
 cd back && npm install && npm run start:dev
 ```
 
@@ -62,7 +62,30 @@ Abrir `http://localhost:4200`.
 
 ## 3. Servidor MCP (`mcp/`)
 
-El servidor MCP (Model Context Protocol) expone la API como herramientas que pueden ser consumidas por asistentes AI compatibles (opencode, Claude Desktop, etc.). Ya está configurado en `opencode.json` y se ejecuta automáticamente al usar el proyecto con opencode. También puede ejecutarse manualmente:
+El servidor MCP (Model Context Protocol) expone la API como herramientas que pueden ser consumidas por asistentes AI compatibles (opencode, Claude Desktop, etc.). El archivo `opencode.json` con la configuración está en `.gitignore`, por lo que no se incluye en el repo.
+
+Para usarlo con **opencode**, crear `opencode.json` en la raíz del proyecto:
+
+```json
+{
+  "mcp": {
+    "api-c-bridge": {
+      "type": "local",
+      "enabled": true,
+      "command": ["npx", "tsx", "mcp/src/index.ts"],
+      "environment": {
+        "API_C_URL": "http://localhost:3000",
+        "API_C_EMAIL": "test@test.com",
+        "API_C_PASSWORD": "12345678"
+      }
+    }
+  }
+}
+```
+
+> Reemplazar `API_C_EMAIL` y `API_C_PASSWORD` con credenciales de un usuario registrado para que el servidor MCP haga auto-login al iniciar.
+
+También puede ejecutarse manualmente:
 
 ```bash
 npx tsx mcp/src/index.ts
