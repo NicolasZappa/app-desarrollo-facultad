@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -67,6 +68,16 @@ export class UsersController {
   ): Promise<{ message: string }> {
     await this.usersService.updateEmail(req.user.id, dto.newEmail, dto.password);
     return { message: "Email updated" };
+  }
+
+  @Delete("me")
+  @UseGuards(JwtAuthGuard)
+  async deleteAccount(
+    @Req() req: { user: { id: string } },
+    @Body() { password }: { password: string },
+  ): Promise<{ message: string }> {
+    await this.usersService.deleteAccount(req.user.id, password);
+    return { message: "Account deleted" };
   }
 
   @Patch(":id/role")

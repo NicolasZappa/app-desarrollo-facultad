@@ -20,4 +20,5 @@ export interface UsersRepository {
   updateRole(id: string, role: UserRole): Promise<UserEntity | null>;
   updatePassword(id: string, passwordHash: string): Promise<UserEntity | null>;
   updateEmail(id: string, email: string): Promise<UserEntity | null>;
+  remove(id: string): Promise<UserEntity | null>;
 }

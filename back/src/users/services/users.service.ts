@@ -168,6 +168,30 @@ export class UsersService {
     }
   }
 
+  async deleteAccount(id: string, password: string) {
+    try {
+      const user = await this.usersRepository.findOneWithPassword(id);
+      if (!user) {
+        throw new BadRequestException("User not found");
+      }
+
+      const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+      if (!isPasswordValid) {
+        throw new UnauthorizedException("Password is incorrect");
+      }
+
+      return await this.usersRepository.remove(id);
+    } catch (error) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof UnauthorizedException
+      ) {
+        throw error;
+      }
+      throw new BadGatewayException("Error deleting account");
+    }
+  }
+
   async updateEmail(id: string, newEmail: string, password: string) {
     try {
       const user = await this.usersRepository.findOneWithPassword(id);

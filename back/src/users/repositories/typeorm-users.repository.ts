@@ -95,4 +95,11 @@ export class TypeOrmUsersRepository implements UsersRepository {
     await this.userRepository.update(id, { email });
     return this.userRepository.findOne({ where: { id } });
   }
+
+  async remove(id: string): Promise<UserEntity | null> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) return null;
+    await this.userRepository.remove(user);
+    return user;
+  }
 }

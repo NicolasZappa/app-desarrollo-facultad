@@ -11,7 +11,7 @@ export default [
   {
     name: "update_user_role",
     description: "Cambia el rol de un usuario (requiere rol Admin)",
-    inputSchema: { id: z.string(), role: z.enum(["User", "Admin"]) },
+    inputSchema: { id: z.string(), role: z.enum(["user", "admin"]) },
     handler: async ({ id, ...body }: any) => api.patch(`/users/${id}/role`, body),
   },
   {
