@@ -19,18 +19,12 @@ export function paginate<T>(
   }
 
   const total = items.length;
-  const totalPages = Math.ceil(total / limit);
   const offset = (page - 1) * limit;
 
-  const data = items.slice(offset, offset + limit);
-
   return {
-    data,
-    meta: {
-      page,
-      limit,
-      total,
-      totalPages,
-    },
+    items: items.slice(offset, offset + limit),
+    total,
+    page,
+    limit,
   };
 }

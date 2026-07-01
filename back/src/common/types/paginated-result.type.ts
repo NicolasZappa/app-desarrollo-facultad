@@ -1,11 +1,6 @@
-export type PaginationMeta = {
+export type PaginatedResult<T> = {
+  items: T[];
+  total: number;
   page: number;
   limit: number;
-  total: number;
-  totalPages: number;
-};
-
-export type PaginatedResult<T> = {
-  data: T[];
-  meta: PaginationMeta;
 };

@@ -1,4 +1,4 @@
-import { Injectable, ConflictException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CategoriesRepository } from "./categories.repositories";
@@ -53,7 +53,12 @@ export class TypeOrmCategoriesRepository implements CategoriesRepository {
     if (!category) return undefined;
 
     if (category.products && category.products.length > 0) {
-      throw new ConflictException("Category has products");
+      await this.categoryRepository.manager
+        .createQueryBuilder()
+        .update("products")
+        .set({ categoryId: null })
+        .where("categoryId = :id", { id })
+        .execute();
     }
 
     await this.categoryRepository.delete(id);

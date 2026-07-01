@@ -25,6 +25,7 @@ export interface UserProfile {
   email: string;
   role: string;
   isVerified: boolean;
+  createdAt: Date;
 }
 
 @Injectable()
@@ -91,7 +92,7 @@ export class AuthService {
     }
 
     if (user.isVerified) {
-      throw new BadRequestException("El email ya está verificado");
+      return { message: "Email ya verificado" };
     }
 
     const verificationToken = crypto.randomUUID();
@@ -113,6 +114,7 @@ export class AuthService {
       email: user.email,
       role: user.role,
       isVerified: user.isVerified,
+      createdAt: user.createdAt,
     };
   }
 
